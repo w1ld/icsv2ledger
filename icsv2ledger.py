@@ -603,6 +603,7 @@ def from_ledger(ledger_file, command):
         cmd,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout_data, stderr_data) = p.communicate()
+    assert not stderr_data, 'failed to run ledger: ' + stderr_data.decode()
     items = set()
     for item in stdout_data.decode('utf-8').splitlines():
         items.add(item)
@@ -671,7 +672,6 @@ def append_mapping_file(map_file, desc, payee, account, tags):
 def tagify(value):
     if value.find(':') < 0 and value[0] != '[' and value[-1] != ']':
         value = ":{0}:".format(value)
-    return value
 
 
 def prompt_for_tags(prompt, values, default):
@@ -771,7 +771,7 @@ def main():
                     found = True  # do not break here, later mapping must win
             else:
                 # If the pattern isn't a string it's a regex
-                if m[0].match(entry.desc):
+                if m[0].search(entry.desc):
                     payee, account, tags = m[1], m[2], m[3]
                     found = True
 
