@@ -198,7 +198,7 @@ def parse_args_and_config_file():
     if args.config_file and ('-h' not in remaining_argv and
                              '--help' not in remaining_argv):
         config = configparser.RawConfigParser(DEFAULTS)
-        config.read(args.config_file)
+        config.read(args.config_file, encoding = 'utf-8')
         if not config.has_section(args.account):
             print('Config file {0} does not contain section {1}'
                   .format(args.config_file, args.account),
@@ -856,10 +856,10 @@ def main():
                     yield line
                 else:
                     ledger_lines.append(line)
-
         if options.reverse:
             ledger_lines.reverse()
-        return ledger_lines
+        for l in ledger_lines :
+            yield l
 
     process_input_output(options.infile, options.outfile)
 
